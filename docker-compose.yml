@@ -14,10 +14,11 @@ services:
       - db_data:/var/lib/mysql
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "$$MYSQL_USER", "-p$$MYSQL_PASSWORD"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-app_password}"]
       interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 12
+    restart: unless-stopped
   backend:
     build:
       context: ./backend
@@ -32,7 +33,9 @@ services:
       DB_NAME: ${DB_NAME:-app_db}
       DB_USER: ${DB_USER:-app_user}
       DB_PASSWORD: ${DB_PASSWORD:-app_password}
-      JWT_SECRET: local-dev-secret
+      JWT_SECRET: ${JWT_SECRET:-local-dev-secret}
+      SEED_ON_START: ${SEED_ON_START:-true}
+      RATE_LIMIT_QPS: ${RATE_LIMIT_QPS:-20}
     ports:
       - "${BACKEND_PORT:-21108}:3000"
     depends_on:
@@ -42,7 +45,8 @@ services:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/health || exit 1"]
       interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 12
+    restart: unless-stopped
   frontend:
     build:
       context: ./frontend
@@ -55,5 +59,6 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+    restart: unless-stopped
 volumes:
   db_data:

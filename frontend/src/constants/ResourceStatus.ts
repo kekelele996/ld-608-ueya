@@ -1,3 +1,16 @@
-export const ResourceStatus = ["AVAILABLE","BOOKED","MAINTENANCE","OFFLINE"] as const;
-export type ResourceStatus = (typeof ResourceStatus)[number];
-export const ResourceStatusText: Record<ResourceStatus, string> = Object.fromEntries(ResourceStatus.map((value) => [value, value.replace(/_/g, " ")])) as Record<ResourceStatus, string>;
+import type { ResourceStatus } from "../types/ResourceStatus";
+
+export const RESOURCE_STATUS_COLOR: Record<ResourceStatus, string> = {
+  AVAILABLE: "success",
+  BOOKED: "processing",
+  MAINTENANCE: "warning",
+  OFFLINE: "default",
+};
+
+export const RESOURCE_STATUS_FILTERS = [
+  { value: "", label: "全部状态" },
+  { value: "AVAILABLE", label: "可用" },
+  { value: "BOOKED", label: "占用中" },
+  { value: "MAINTENANCE", label: "维护中" },
+  { value: "OFFLINE", label: "离线" },
+];

@@ -1,17 +1,15 @@
-import type { GroundTask } from "../types/GroundTask";
+import type { GroundTask } from "../types/entities";
 
-export const createDefaultGroundTask = (overrides: Partial<GroundTask> = {}): GroundTask => ({
-  id: 1 as never,
-  turnaround_id: 1 as never,
-  task_type: "CATERING" as never,
-  team_id: 1 as never,
-  planned_start: "planned start 1" as never,
-  deadline: "deadline 1" as never,
-  actual_finish: "actual finish 1" as never,
-  status: "ON_STAND" as never,
-  blocker_note: "blocker note 1" as never,
-  ...overrides
+// Builds an empty task row used as a fallback skeleton by task pages.
+export const createEmptyTask = (): GroundTask => ({
+  id: 0,
+  turnaround_id: 0,
+  task_type: "CLEANING",
+  team_id: "",
+  planned_start: "",
+  deadline: "",
+  actual_finish: null,
+  status: "PLANNED",
+  blocker_note: "",
+  signed_at: null,
 });
-
-export const createGroundTaskForm = createDefaultGroundTask;
-export const createGroundTaskResponse = createDefaultGroundTask;

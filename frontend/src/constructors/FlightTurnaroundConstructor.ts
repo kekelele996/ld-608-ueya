@@ -1,16 +1,22 @@
-import type { FlightTurnaround } from "../types/FlightTurnaround";
+import dayjs from "dayjs";
+import type { RegisterTurnaroundPayload } from "../api/FlightTurnaround";
+import type { RegisterDelayPayload } from "../api/DelayEvent";
 
-export const createDefaultFlightTurnaround = (overrides: Partial<FlightTurnaround> = {}): FlightTurnaround => ({
-  id: 1 as never,
-  flight_no: "flight no 1" as never,
-  aircraft_reg: "aircraft reg 1" as never,
-  stand_no: "stand no 1" as never,
-  arrival_time: "2026-06-11T09:00:00Z" as never,
-  departure_time: "2026-06-11T09:00:00Z" as never,
-  turnaround_status: "ON_STAND" as never,
-  delay_reason: "delay reason 1" as never,
-  ...overrides
+// Default turnaround form used by 过站登记 modal.
+export const createTurnaroundForm = (overrides: Partial<RegisterTurnaroundPayload> = {}): RegisterTurnaroundPayload => ({
+  flight_no: "",
+  aircraft_reg: "",
+  stand_no: "",
+  arrival_time: dayjs().add(5, "minute").toISOString(),
+  departure_time: dayjs().add(65, "minute").toISOString(),
+  ...overrides,
 });
 
-export const createFlightTurnaroundForm = createDefaultFlightTurnaround;
-export const createFlightTurnaroundResponse = createDefaultFlightTurnaround;
+// Default delay registration form.
+export const createDelayForm = (overrides: Partial<RegisterDelayPayload> = {}): RegisterDelayPayload => ({
+  delay_type: "LATE_ARRIVAL",
+  minutes: 30,
+  root_cause: "",
+  responsibility_team: "",
+  ...overrides,
+});

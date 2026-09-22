@@ -1,21 +1,24 @@
-import { mockData } from "../mocks/seedData";
-import type { ResourceBooking } from "../types/ResourceBooking";
+import { request, type ListEnvelope } from "./client";
+import type { ResourceBooking } from "../types/entities";
 
-const endpoint = "/api/resource-booking";
+export const listBookings = (params?: { status?: string }) =>
+  request<ListEnvelope<ResourceBooking>>("/resource-bookings", { query: params });
 
-export async function listResourceBooking(): Promise<ResourceBooking[]> {
-  if (typeof fetch !== "undefined" && endpoint.startsWith("/api") && true) {
-    try {
-      const res = await fetch(endpoint);
-      if (res.ok) return await res.json();
-    } catch {
-      // Local mock fallback keeps the UI available during offline review.
-    }
-  }
-  return [...(mockData.resourceBooking as unknown as ResourceBooking[])];
+export interface AdjustResult {
+  saved: boolean;
+  booking_id: number;
+  conflicts: unknown[];
 }
 
-export async function saveResourceBooking(payload: ResourceBooking) {
-  console.info("save ResourceBooking", payload);
-  return payload;
-}
+// Adjust rejects with 409 + details (itemized conflicts) when the new window
+// is unusable; the booking stays PENDING in that case.
+export const adjustBooking = (id: number, start_time: string, end_time: string) =>
+  request<AdjustResult>(`/resource-bookings/${id}/adjust`, {
+    method: "POST",
+    body: { start_time, end_time },
+  });
+
+export const releaseBooking = (id: number) =>
+  request<{ id: number; booking_status: string }>(`/resource-bookings/${id}/release`, {
+    method: "POST",
+  });

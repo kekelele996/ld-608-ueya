@@ -1,21 +1,20 @@
-import { mockData } from "../mocks/seedData";
-import type { GroundResource } from "../types/GroundResource";
+import { request, type ListEnvelope } from "./client";
+import type { GroundResource, ResourceBooking } from "../types/entities";
 
-const endpoint = "/api/ground-resource";
+export const listResources = (params?: { status?: string; type?: string }) =>
+  request<ListEnvelope<GroundResource>>("/ground-resources", { query: params });
 
-export async function listGroundResource(): Promise<GroundResource[]> {
-  if (typeof fetch !== "undefined" && endpoint.startsWith("/api") && true) {
-    try {
-      const res = await fetch(endpoint);
-      if (res.ok) return await res.json();
-    } catch {
-      // Local mock fallback keeps the UI available during offline review.
-    }
-  }
-  return [...(mockData.groundResource as unknown as GroundResource[])];
+export const updateResourceStatus = (
+  id: number,
+  payload: { status?: string; maintenance_start?: string; maintenance_end?: string },
+) => request<GroundResource>(`/ground-resources/${id}/status`, { method: "PATCH", body: payload });
+
+export interface CalendarResponse {
+  items: ResourceBooking[];
+  resources: GroundResource[];
 }
 
-export async function saveGroundResource(payload: GroundResource) {
-  console.info("save GroundResource", payload);
-  return payload;
-}
+export const getCalendar = (from?: string, to?: string) =>
+  request<CalendarResponse>("/resource-calendar", {
+    query: { from, to },
+  });

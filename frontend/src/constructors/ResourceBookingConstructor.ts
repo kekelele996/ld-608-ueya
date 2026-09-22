@@ -1,16 +1,15 @@
-import type { ResourceBooking } from "../types/ResourceBooking";
+import dayjs from "dayjs";
 
-export const createDefaultResourceBooking = (overrides: Partial<ResourceBooking> = {}): ResourceBooking => ({
-  id: 1 as never,
-  resource_id: 1 as never,
-  turnaround_id: 1 as never,
-  task_id: 1 as never,
-  start_time: "2026-06-11T09:00:00Z" as never,
-  end_time: "2026-06-11T09:00:00Z" as never,
-  booking_status: "ON_STAND" as never,
-  conflict_reason: "conflict reason 1" as never,
-  ...overrides
-});
+// Empty booking adjust window form; pages seed start/end from booking rows.
+export interface BookingAdjustForm {
+  start_time: string;
+  end_time: string;
+}
 
-export const createResourceBookingForm = createDefaultResourceBooking;
-export const createResourceBookingResponse = createDefaultResourceBooking;
+export const createBookingAdjustForm = (startTime?: string, durationMinutes = 25): BookingAdjustForm => {
+  const base = startTime ? dayjs(startTime) : dayjs();
+  return {
+    start_time: base.toISOString(),
+    end_time: base.add(durationMinutes, "minute").toISOString(),
+  };
+};

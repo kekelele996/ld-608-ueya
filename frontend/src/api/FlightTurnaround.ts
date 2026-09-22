@@ -1,21 +1,27 @@
-import { mockData } from "../mocks/seedData";
-import type { FlightTurnaround } from "../types/FlightTurnaround";
+import { request, type ListEnvelope } from "./client";
+import type { FlightTurnaround, TurnaroundDetail, PlanResult } from "../types/entities";
 
-const endpoint = "/api/flight-turnaround";
-
-export async function listFlightTurnaround(): Promise<FlightTurnaround[]> {
-  if (typeof fetch !== "undefined" && endpoint.startsWith("/api") && true) {
-    try {
-      const res = await fetch(endpoint);
-      if (res.ok) return await res.json();
-    } catch {
-      // Local mock fallback keeps the UI available during offline review.
-    }
-  }
-  return [...(mockData.flightTurnaround as unknown as FlightTurnaround[])];
+export interface RegisterTurnaroundPayload {
+  flight_no: string;
+  aircraft_reg: string;
+  stand_no: string;
+  arrival_time: string;
+  departure_time: string;
 }
 
-export async function saveFlightTurnaround(payload: FlightTurnaround) {
-  console.info("save FlightTurnaround", payload);
-  return payload;
-}
+export const listTurnarounds = (params?: { page?: number; page_size?: number }) =>
+  request<ListEnvelope<FlightTurnaround>>("/turnarounds", { query: params });
+
+export const getTurnaround = (id: number) =>
+  request<TurnaroundDetail>(`/turnarounds/${id}`);
+
+export const registerTurnaround = (payload: RegisterTurnaroundPayload) =>
+  request<FlightTurnaround>("/turnarounds", { method: "POST", body: payload });
+
+// On conflict the backend returns 409 with { result } carrying the unsaved
+// preview; the caller catches RequestError to display itemized reasons.
+export const generatePlan = (id: number, taskTypes?: string[]) =>
+  request<PlanResult>(`/turnarounds/${id}/plan`, {
+    method: "POST",
+    body: { task_types: taskTypes ?? [] },
+  });
