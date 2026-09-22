@@ -1,2 +1,17 @@
 package constructors
-// GroundResource keeps 保障资源 changes coupled across layers.
+
+import (
+	"groundTurn/src/constants"
+	"groundTurn/src/models"
+)
+
+// NewGroundResource builds a resource ledger row during seeding/admin create.
+func NewGroundResource(code, resourceType, location, teamID string, status constants.ResourceStatus) *models.GroundResource {
+	return &models.GroundResource{
+		ResourceCode:       code,
+		ResourceType:       resourceType,
+		Location:           location,
+		AvailabilityStatus: string(status),
+		OwnerTeam:          teamID,
+	}
+}

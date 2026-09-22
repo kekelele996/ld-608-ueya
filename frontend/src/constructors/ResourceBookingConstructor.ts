@@ -1,16 +1,26 @@
+import dayjs from "dayjs";
 import type { ResourceBooking } from "../types/ResourceBooking";
 
-export const createDefaultResourceBooking = (overrides: Partial<ResourceBooking> = {}): ResourceBooking => ({
-  id: 1 as never,
-  resource_id: 1 as never,
-  turnaround_id: 1 as never,
-  task_id: 1 as never,
-  start_time: "2026-06-11T09:00:00Z" as never,
-  end_time: "2026-06-11T09:00:00Z" as never,
-  booking_status: "ON_STAND" as never,
-  conflict_reason: "conflict reason 1" as never,
-  ...overrides
-});
+export function createDefaultResourceBooking(
+  overrides: Partial<ResourceBooking> = {}
+): ResourceBooking {
+  return {
+    id: 0,
+    resource_id: 0,
+    turnaround_id: 0,
+    task_id: null,
+    start_time: dayjs().format(),
+    end_time: dayjs().add(30, "minute").format(),
+    booking_status: "PENDING",
+    conflict_reason: "",
+    ...overrides
+  };
+}
 
-export const createResourceBookingForm = createDefaultResourceBooking;
-export const createResourceBookingResponse = createDefaultResourceBooking;
+// 调整时段弹窗的表单默认值：以被挤出预约当前窗口为基准。
+export function createAdjustBookingForm(booking: ResourceBooking) {
+  return {
+    resource_id: booking.resource_id,
+    range: [dayjs(booking.start_time), dayjs(booking.end_time)] as [dayjs.Dayjs, dayjs.Dayjs]
+  };
+}

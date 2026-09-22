@@ -1,159 +1,48 @@
-export const mockData = {
-  "flightTurnaround": [
+// 本地种子数据快照：全部来自本地数据库，禁止接入第三方 API。
+// 仅在后端完全不可用时作为只读兜底（不参与写操作闭环）。
+import type { FlightTurnaround } from "../types/FlightTurnaround";
+import type { GroundTask } from "../types/GroundTask";
+import type { GroundResource } from "../types/GroundResource";
+import type { ResourceBooking } from "../types/ResourceBooking";
+import type { DelayEvent } from "../types/DelayEvent";
+
+const BASE = "2026-09-21T08:00:00+08:00";
+
+export const mockSeed: {
+  turnarounds: FlightTurnaround[];
+  tasks: GroundTask[];
+  resources: GroundResource[];
+  bookings: ResourceBooking[];
+  delays: DelayEvent[];
+} = {
+  turnarounds: [
     {
-      "id": 1,
-      "flight_no": "flight no 1",
-      "aircraft_reg": "aircraft reg 1",
-      "stand_no": "stand no 1",
-      "arrival_time": "2026-06-11T09:00:00Z",
-      "departure_time": "2026-06-11T09:00:00Z",
-      "turnaround_status": "ON_STAND",
-      "delay_reason": "delay reason 1"
-    },
-    {
-      "id": 2,
-      "flight_no": "flight no 2",
-      "aircraft_reg": "aircraft reg 2",
-      "stand_no": "stand no 2",
-      "arrival_time": "2026-06-12T09:00:00Z",
-      "departure_time": "2026-06-12T09:00:00Z",
-      "turnaround_status": "IN_SERVICE",
-      "delay_reason": "delay reason 2"
-    },
-    {
-      "id": 3,
-      "flight_no": "flight no 3",
-      "aircraft_reg": "aircraft reg 3",
-      "stand_no": "stand no 3",
-      "arrival_time": "2026-06-13T09:00:00Z",
-      "departure_time": "2026-06-13T09:00:00Z",
-      "turnaround_status": "ARRIVING",
-      "delay_reason": "delay reason 3"
+      id: 1,
+      flight_no: "CA1831",
+      aircraft_reg: "B-5821",
+      stand_no: "203",
+      arrival_time: BASE,
+      departure_time: "2026-09-21T09:15:00+08:00",
+      turnaround_status: "ARRIVING",
+      delay_reason: "",
+      accumulated_delay: 0,
+      plan_generated: false
     }
   ],
-  "groundTask": [
+  tasks: [],
+  resources: [
     {
-      "id": 1,
-      "turnaround_id": 1,
-      "task_type": "CATERING",
-      "team_id": 1,
-      "planned_start": "planned start 1",
-      "deadline": "deadline 1",
-      "actual_finish": "actual finish 1",
-      "status": "ON_STAND",
-      "blocker_note": "blocker note 1"
-    },
-    {
-      "id": 2,
-      "turnaround_id": 2,
-      "task_type": "BAGGAGE",
-      "team_id": 2,
-      "planned_start": "planned start 2",
-      "deadline": "deadline 2",
-      "actual_finish": "actual finish 2",
-      "status": "IN_SERVICE",
-      "blocker_note": "blocker note 2"
-    },
-    {
-      "id": 3,
-      "turnaround_id": 3,
-      "task_type": "REFUEL",
-      "team_id": 3,
-      "planned_start": "planned start 3",
-      "deadline": "deadline 3",
-      "actual_finish": "actual finish 3",
-      "status": "ARRIVING",
-      "blocker_note": "blocker note 3"
+      id: 1,
+      resource_code: "BELT-01",
+      resource_type: "BAGGAGE",
+      location: "T1-远机位",
+      availability_status: "AVAILABLE",
+      maintenance_due_at: null,
+      owner_team: "TEAM-BAG",
+      available_from: null,
+      available_to: null
     }
   ],
-  "groundResource": [
-    {
-      "id": 1,
-      "resource_code": "resource code 1",
-      "resource_type": "CATERING",
-      "location": "location 1",
-      "availability_status": "ON_STAND",
-      "maintenance_due_at": "2026-06-11T09:00:00Z",
-      "owner_team": "owner team 1"
-    },
-    {
-      "id": 2,
-      "resource_code": "resource code 2",
-      "resource_type": "BAGGAGE",
-      "location": "location 2",
-      "availability_status": "IN_SERVICE",
-      "maintenance_due_at": "2026-06-12T09:00:00Z",
-      "owner_team": "owner team 2"
-    },
-    {
-      "id": 3,
-      "resource_code": "resource code 3",
-      "resource_type": "REFUEL",
-      "location": "location 3",
-      "availability_status": "ARRIVING",
-      "maintenance_due_at": "2026-06-13T09:00:00Z",
-      "owner_team": "owner team 3"
-    }
-  ],
-  "resourceBooking": [
-    {
-      "id": 1,
-      "resource_id": 1,
-      "turnaround_id": 1,
-      "task_id": 1,
-      "start_time": "2026-06-11T09:00:00Z",
-      "end_time": "2026-06-11T09:00:00Z",
-      "booking_status": "ON_STAND",
-      "conflict_reason": "conflict reason 1"
-    },
-    {
-      "id": 2,
-      "resource_id": 2,
-      "turnaround_id": 2,
-      "task_id": 2,
-      "start_time": "2026-06-12T09:00:00Z",
-      "end_time": "2026-06-12T09:00:00Z",
-      "booking_status": "IN_SERVICE",
-      "conflict_reason": "conflict reason 2"
-    },
-    {
-      "id": 3,
-      "resource_id": 3,
-      "turnaround_id": 3,
-      "task_id": 3,
-      "start_time": "2026-06-13T09:00:00Z",
-      "end_time": "2026-06-13T09:00:00Z",
-      "booking_status": "ARRIVING",
-      "conflict_reason": "conflict reason 3"
-    }
-  ],
-  "delayEvent": [
-    {
-      "id": 1,
-      "turnaround_id": 1,
-      "delay_type": "CATERING",
-      "minutes": "minutes 1",
-      "root_cause": "root cause 1",
-      "responsibility_team": "responsibility team 1",
-      "resolved_at": "2026-06-11T09:00:00Z"
-    },
-    {
-      "id": 2,
-      "turnaround_id": 2,
-      "delay_type": "BAGGAGE",
-      "minutes": "minutes 2",
-      "root_cause": "root cause 2",
-      "responsibility_team": "responsibility team 2",
-      "resolved_at": "2026-06-12T09:00:00Z"
-    },
-    {
-      "id": 3,
-      "turnaround_id": 3,
-      "delay_type": "REFUEL",
-      "minutes": "minutes 3",
-      "root_cause": "root cause 3",
-      "responsibility_team": "responsibility team 3",
-      "resolved_at": "2026-06-13T09:00:00Z"
-    }
-  ]
-} as const;
+  bookings: [],
+  delays: []
+};

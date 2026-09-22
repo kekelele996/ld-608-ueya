@@ -1,16 +1,33 @@
+import dayjs from "dayjs";
 import type { FlightTurnaround } from "../types/FlightTurnaround";
 
-export const createDefaultFlightTurnaround = (overrides: Partial<FlightTurnaround> = {}): FlightTurnaround => ({
-  id: 1 as never,
-  flight_no: "flight no 1" as never,
-  aircraft_reg: "aircraft reg 1" as never,
-  stand_no: "stand no 1" as never,
-  arrival_time: "2026-06-11T09:00:00Z" as never,
-  departure_time: "2026-06-11T09:00:00Z" as never,
-  turnaround_status: "ON_STAND" as never,
-  delay_reason: "delay reason 1" as never,
-  ...overrides
-});
+// 页面/store/service 禁止散写默认结构，统一由构造器产出。
+export function createDefaultFlightTurnaround(
+  overrides: Partial<FlightTurnaround> = {}
+): FlightTurnaround {
+  return {
+    id: 0,
+    flight_no: "",
+    aircraft_reg: "",
+    stand_no: "",
+    arrival_time: dayjs().add(1, "hour").format(),
+    departure_time: dayjs().add(2, "hour").format(),
+    turnaround_status: "ARRIVING",
+    delay_reason: "",
+    accumulated_delay: 0,
+    plan_generated: false,
+    ...overrides
+  };
+}
 
-export const createFlightTurnaroundForm = createDefaultFlightTurnaround;
-export const createFlightTurnaroundResponse = createDefaultFlightTurnaround;
+export function createTurnaroundForm() {
+  return {
+    flight_no: "",
+    aircraft_reg: "",
+    stand_no: "",
+    range: [dayjs().add(1, "hour"), dayjs().add(2, "hour").add(15, "minute")] as [
+      dayjs.Dayjs,
+      dayjs.Dayjs
+    ]
+  };
+}

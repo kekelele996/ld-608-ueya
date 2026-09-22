@@ -1,21 +1,12 @@
-import { mockData } from "../mocks/seedData";
+import { request } from "./client";
 import type { GroundTask } from "../types/GroundTask";
 
-const endpoint = "/api/ground-task";
-
-export async function listGroundTask(): Promise<GroundTask[]> {
-  if (typeof fetch !== "undefined" && endpoint.startsWith("/api") && true) {
-    try {
-      const res = await fetch(endpoint);
-      if (res.ok) return await res.json();
-    } catch {
-      // Local mock fallback keeps the UI available during offline review.
-    }
-  }
-  return [...(mockData.groundTask as unknown as GroundTask[])];
-}
-
-export async function saveGroundTask(payload: GroundTask) {
-  console.info("save GroundTask", payload);
-  return payload;
-}
+export const groundTaskApi = {
+  list: () => request<GroundTask[]>("/tasks"),
+  sign: (id: number, operator?: string) =>
+    request<GroundTask>(`/tasks/${id}/sign`, { method: "POST", body: { operator } }),
+  finish: (id: number, note?: string) =>
+    request<GroundTask>(`/tasks/${id}/finish`, { method: "POST", body: { note } }),
+  block: (id: number, note: string) =>
+    request<GroundTask>(`/tasks/${id}/block`, { method: "POST", body: { note } })
+};
